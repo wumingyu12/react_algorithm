@@ -9,6 +9,8 @@ react 使用
 ----
 1. 使用了material-ui
 
+2.使用https://github.com/tejitak/react-state-animation 做state的动画
+
 2. 支持es6的webpack.config.js中指明js的代码加载器用babel(注意不要用babel 6,webpack的配置方式是不同的)，package.json里面也有这个babel模块
 
 ##### webpack.config.js

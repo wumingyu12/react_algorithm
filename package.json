@@ -31,6 +31,7 @@
     "material-ui": "^0.14.4",
     "react-dom": "^0.14.7",
     "react-kendo": "^0.13.11",
+    "react-state-animation": "^0.1.0",
     "react-tap-event-plugin": "^0.2.2"
   }
 }
