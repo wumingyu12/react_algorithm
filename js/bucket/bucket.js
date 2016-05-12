@@ -13,7 +13,8 @@ export default class bucket extends React.Component {
   render() {
     return (
       <div style={styles.contain}>
-        <div style={styles.title}>{this.props.watercapacity+'升'+'/'+this.props.capacity+'升'}</div>
+      	{/*四舍五入*/}
+        <div style={styles.title}>{Math.round(this.props.watercapacity)+'升'+'/'+this.props.capacity+'升'}</div>
         {/*height 代表水桶的高度，waterPercent代表桶里面有百分多少的水*/}
         <div style={Object.assign({},styles.bucket,{height:this.props.capacity/10*HEIGHT_TO_TEN+'vh'})}>
           <div style={

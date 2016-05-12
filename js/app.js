@@ -5,42 +5,52 @@ import RaisedButton from 'material-ui/lib/raised-button';//0.14的注入方式�
 //state 动画
 import ReactStateAnimation from 'react-state-animation'
 
-const waterstate=[[1,2,3],[2,2,4],[1,3,2]];
+const waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
 class App extends React.Component{
   constructor(props) {
     super(props);
-  
+    this.currentStateIndex=0;
     this.state = {
-      currentStateIndex:0,
-      currentState:waterstate[0],
-      x:0
+      bucket_one:waterstate[this.currentStateIndex][0],//第一个水桶水量
+      bucket_two:waterstate[this.currentStateIndex][1],//第二个水桶水量
+      bucket_three:waterstate[this.currentStateIndex][2]//第三个水桶水量
     };
 
     this._animate = new ReactStateAnimation(this)
   }
-  start() {
-    // start animation
-    this._animate.linearInOut('x', 2/*end value*/, 1000/*duration(ms)*/)
+  //====================水位变化动画=============================
+  changeWaterUseAnimation(cap_one,cap_two,cap_three) {
+    this._animate.linearInOut('bucket_one', cap_one, 1000);
+    this._animate.linearInOut('bucket_two', cap_two, 1000);
+    this._animate.linearInOut('bucket_three', cap_three, 1000);
   }
-  //回复上一个倒水动作
+  //=======
+  start(){
+    this.changeWaterUseAnimation(3,3,3)
+  }
+  //=================回复上一个倒水动作==========================
   lastStep(){
-    console.log(this.state);
-    var currentStateIndex=this.state.currentStateIndex;
-    this.setState({
-      currentStateIndex:currentStateIndex-1,
-      currentState:waterstate[currentStateIndex-1]
-    })
-    console.log(this.state);
+    //console.log(this.state);
+    if(this.currentStateIndex==0){
+      alert("已经是最前面的一个动作");
+      return
+    }
+    this.currentStateIndex=this.currentStateIndex-1;
+    let newWaterState=waterstate[this.currentStateIndex];
+    this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
+    //console.log(this.state);
   }
   //下一个倒水动作
   nextStep(){
-    console.log(this.state);
-    var currentStateIndex=this.state.currentStateIndex;
-    this.setState({
-      currentStateIndex:currentStateIndex+1,
-      currentState:waterstate[currentStateIndex+1]
-    })
-    console.log(this.state);
+    //console.log(this.state);
+    if(this.currentStateIndex==waterstate.length-1){
+      alert("已经是最后的一个动作");
+      return
+    }
+    this.currentStateIndex=this.currentStateIndex+1;
+    let newWaterState=waterstate[this.currentStateIndex];
+    this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
+    //console.log(this.state);
   }
   render() {
     return (
@@ -49,15 +59,15 @@ class App extends React.Component{
         <div style={styles.bucketcontain}>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={3} watercapacity={this.state.x}></Bucket>
+            <Bucket capacity={3} watercapacity={this.state.bucket_one}></Bucket>
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={5} watercapacity={this.state.currentState[1]}></Bucket>
+            <Bucket capacity={5} watercapacity={this.state.bucket_two}></Bucket>
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={8} watercapacity={this.state.currentState[2]}></Bucket>
+            <Bucket capacity={8} watercapacity={this.state.bucket_three}></Bucket>
           </div>
           <div style={styles.jiange}></div>
         </div>
@@ -110,18 +120,18 @@ const styles = {
   jiange:{
     display:'flex',
     flex:1,
-    borderColor:'green',
-    bordrWidth:'2px',
-    borderStyle:'solid',
+    //borderColor:'green',
+    //bordrWidth:'2px',
+    //borderStyle:'solid',
     alignItems:'center',
     justifyContent: 'center',
   },
   bucket:{
     display:'flex',
     flex:2,
-    borderColor:'green',
-    bordrWidth:'2px',
-    borderStyle:'solid',
+    //borderColor:'green',
+    //bordrWidth:'2px',
+    //borderStyle:'solid',
     alignItems:'center',
     justifyContent: 'center',
     position:'relative'

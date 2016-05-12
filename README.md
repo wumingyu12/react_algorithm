@@ -9,7 +9,16 @@ react 使用
 ----
 1. 使用了material-ui
 
-2.使用https://github.com/tejitak/react-state-animation 做state的动画
+2.使用https://github.com/tejitak/react-state-animation 做state的动画，支持promise链式调用
+```javascript
+    //单个动画
+   this._animate.linearInOut('x', 2/*end value*/, 1000/*duration(ms)*/)
+   //组合动画,同时执行
+    this._animate.linearInOut('bucket_one', 2/*end value*/, 1000/*duration(ms)*/)
+    this._animate.linearInOut('bucket_two', 2/*end value*/, 1000/*duration(ms)*/)
+    this._animate.linearInOut('bucket_three', 2/*end value*/, 1000/*duration(ms)*/)
+
+```
 
 2. 支持es6的webpack.config.js中指明js的代码加载器用babel(注意不要用babel 6,webpack的配置方式是不同的)，package.json里面也有这个babel模块
 
