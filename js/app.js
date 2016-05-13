@@ -4,8 +4,11 @@ import Bucket from './bucket/bucket.js';
 import RaisedButton from 'material-ui/lib/raised-button';//0.14的注入方式，注意切换官网的文档
 //state 动画
 import ReactStateAnimation from 'react-state-animation'
+//方法求解算法
+import * as Alg_bucket from './algorithm/bucket_algorithm.js'
 
-const waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
+//var waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
+var waterstate=Alg_bucket.getload()[0];
 class App extends React.Component{
   constructor(props) {
     super(props);
@@ -59,7 +62,7 @@ class App extends React.Component{
         <div style={styles.bucketcontain}>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={3} watercapacity={this.state.bucket_one}></Bucket>
+            <Bucket capacity={8} watercapacity={this.state.bucket_one}></Bucket>
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
@@ -67,7 +70,7 @@ class App extends React.Component{
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={8} watercapacity={this.state.bucket_three}></Bucket>
+            <Bucket capacity={3} watercapacity={this.state.bucket_three}></Bucket>
           </div>
           <div style={styles.jiange}></div>
         </div>
