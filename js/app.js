@@ -2,18 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Bucket from './bucket/bucket.js';
 import RaisedButton from 'material-ui/lib/raised-button';//0.14的注入方式，注意切换官网的文档
+import TextField from 'material-ui/lib/text-field';
 //state 动画
 import ReactStateAnimation from 'react-state-animation'
 //方法求解算法
 import * as Alg_bucket from './algorithm/bucket_algorithm.js'
 
 //var waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
-var waterstate=Alg_bucket.getload()[0];
+var waterstate=Alg_bucket.getload()[0] || [[0,0,0]];
 class App extends React.Component{
   constructor(props) {
     super(props);
     this.currentStateIndex=0;
     this.state = {
+      bucket_one_cap:8,//水桶1的容积
+      bucket_two_cap:5,
+      bucket_three_cap:3,
+      //水桶当前的水量
       bucket_one:waterstate[this.currentStateIndex][0],//第一个水桶水量
       bucket_two:waterstate[this.currentStateIndex][1],//第二个水桶水量
       bucket_three:waterstate[this.currentStateIndex][2]//第三个水桶水量
@@ -28,9 +33,9 @@ class App extends React.Component{
     this._animate.linearInOut('bucket_three', cap_three, 1000);
   }
   //=======
-  start(){
-    this.changeWaterUseAnimation(3,3,3)
-  }
+  // start(){
+  //   this.changeWaterUseAnimation(3,3,3)
+  // }
   //=================回复上一个倒水动作==========================
   lastStep(){
     //console.log(this.state);
@@ -55,22 +60,49 @@ class App extends React.Component{
     this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
     //console.log(this.state);
   }
+  //设置初始值和求解
+  SetAndSolve(){
+    var bucket_cap = this.refs.text_bucket_cap.getValue();
+    var bucket_cap_slice=bucket_cap.split(",");//输入为3,5,6的格式我们以”，“分割
+    this.setState({
+      bucket_one_cap:Number(bucket_cap_slice[0]),
+      bucket_two_cap:Number(bucket_cap_slice[1]),
+      bucket_three_cap:Number(bucket_cap_slice[2])
+    })
+    console.log(bucket_cap_slice);
+  }
   render() {
     return (
       <div style={styles.contain}>
+        {/*顶部可以设置水桶初始值的地方*/}
+        <div style={styles.titlePan}>
+          <div>
+            水桶容积:  <TextField ref="text_bucket_cap" hintText="如为8升,5升,3升，请输入 8,5,3" />
+          </div>
+          <div>
+             最终值:  <TextField ref="text_last_value" hintText="如为4升,4升,0升，请输入 4,4,0" />
+          </div>
+          <div>
+            <RaisedButton label="设置并求解" 
+              secondary={true} 
+              style={styles.panelbtn} 
+              onMouseDown={this.SetAndSolve.bind(this)}
+              />
+          </div>
+        </div>
         {/*水桶容器*/}
         <div style={styles.bucketcontain}>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={8} watercapacity={this.state.bucket_one}></Bucket>
+            <Bucket capacity={this.state.bucket_one_cap} watercapacity={this.state.bucket_one}></Bucket>
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={5} watercapacity={this.state.bucket_two}></Bucket>
+            <Bucket capacity={this.state.bucket_two_cap} watercapacity={this.state.bucket_two}></Bucket>
           </div>
           <div style={styles.jiange}></div>
           <div style={styles.bucket}>
-            <Bucket capacity={3} watercapacity={this.state.bucket_three}></Bucket>
+            <Bucket capacity={this.state.bucket_three_cap} watercapacity={this.state.bucket_three}></Bucket>
           </div>
           <div style={styles.jiange}></div>
         </div>
@@ -83,7 +115,7 @@ class App extends React.Component{
                         />
           <RaisedButton label="自动运行" 
                         secondary={true}
-                        onMouseDown={this.start.bind(this)}
+                        //onMouseDown={this.start.bind(this)}
                         style={styles.panelbtn} />
           <RaisedButton label="下一步" 
                         secondary={true}
@@ -103,6 +135,12 @@ const styles = {
     display:'flex',
     flexDirection:'column',
     alignItems:'stretch',
+  },
+  titlePan:{
+    flex:1,
+    display:'flex',
+    alignItems:'center',
+    justifyContent:'space-around'
   },
   panel:{
     flex:1,
