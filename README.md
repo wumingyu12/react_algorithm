@@ -19,6 +19,8 @@ react 使用
     this._animate.linearInOut('bucket_three', 2/*end value*/, 1000/*duration(ms)*/)
 
 ```
+3.三个水桶的倒水问题的算法用了深度优先搜索算法，具体可以看./algorithm/bucket_algorithm.js
+  详细的算法说明可以看书本《算法乐趣》
 
 2. 支持es6的webpack.config.js中指明js的代码加载器用babel(注意不要用babel 6,webpack的配置方式是不同的)，package.json里面也有这个babel模块
 

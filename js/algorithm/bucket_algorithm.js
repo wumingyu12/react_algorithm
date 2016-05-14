@@ -70,12 +70,17 @@ function _canTakeDumpAction(watercapacity,waterArr,numfrom,numto){
 /*========================================
 	树的子分支生成
 	比如[8,0,0]节点可以生成[5,0,3],[3,5,0]=
+
+	输入：
+		1.要生成子元素的节点 
+		2.水桶水的容积数组BucketCapArr，如[8,5,3]
  ============================================*/
-function createChild(fatherObj){
+function createChild(fatherObj,BucketCapArr){
 	var treenode={
 		value:[0,0,0],
 		children:[]
 	}
+	//console.log(BucketCapArr);
 	//两重循环代表所有的倒水动作
 	for (var numfrom = 0; numfrom < BUCKET_COUNT; numfrom++) {//代表从numfrom倒水到numto
 		for (var numto = 0; numto < BUCKET_COUNT; numto++){
@@ -114,8 +119,12 @@ function createChild(fatherObj){
 	  继续搜索的节点，我们将其加入到已处理的状态列表中并
 	  将生成他的所有可行的子节点，如果存在子节点我们对每一个子节点进行这个节点算法（递归）
 	5.当以这个节点为父的所有节点和节点分支都搜索完成了，路径要pop掉该节点，并return
+
+	输入：
+		1.要进行搜索的节点 
+		2.水桶水的容积数组BucketCapArr，如[8,5,3]
 =====================================================================================*/
-function nodeSearch(nodeObj){
+function nodeSearch(nodeObj,BucketCapArr){
 	//debugger
 	//步骤1
 	SEARCH_LOAD.push(nodeObj.value);
@@ -132,12 +141,13 @@ function nodeSearch(nodeObj){
 	};
 	//步骤4 递归
 	STATE_ARR.push(nodeObj.value);//标记这个为一个已处理的状态
-	createChild(nodeObj);
+	//生成该节点的所有可行的子节点
+	createChild(nodeObj,BucketCapArr);
 	//此时nodeObj下面的children不为空
 	if(nodeObj.children.toString() != [].toString() ){//如果nodeObj下面的儿子不为空
 		//采用深度优先的方法搜索
 		for (var i = 0; i < nodeObj.children.length; i++) {
-			nodeSearch(nodeObj.children[i]);
+			nodeSearch(nodeObj.children[i],BucketCapArr);
 		};
 	};
 	//步骤5
@@ -145,8 +155,13 @@ function nodeSearch(nodeObj){
 	return;
 }
 
-export function getload(){
-	nodeSearch(RootNode);
+/*=======================根据初始值求解并输出所有解==================================
+	输入：
+		1.水桶水的容积数组BucketCapArr，如[8,5,3]
+		2.我们需要求得到的水桶容积数WaterCount如4,代表4升水最后我们需要
+*/
+export function getload(BucketCapArr,WaterCount){
+	nodeSearch(RootNode,BucketCapArr);
 	return ALL_SEARCH_LOAD;
 }
 // 生成子节点的测试

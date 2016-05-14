@@ -9,7 +9,8 @@ import ReactStateAnimation from 'react-state-animation'
 import * as Alg_bucket from './algorithm/bucket_algorithm.js'
 
 //var waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
-var waterstate=Alg_bucket.getload()[0] || [[0,0,0]];
+//getload([8,5,3],4)代表我们的水桶的容积为8,5,3最后我们需要得到的水为4升水
+var waterstate=Alg_bucket.getload([8,5,3],4)[0] || [[0,0,0]];
 class App extends React.Component{
   constructor(props) {
     super(props);
