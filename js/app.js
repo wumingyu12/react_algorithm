@@ -10,21 +10,24 @@ import * as Alg_bucket from './algorithm/bucket_algorithm.js'
 
 //var waterstate=[[0,0,8],[2,2,3],[2,2,4],[1,3,2]];
 //getload([8,5,3],4)代表我们的水桶的容积为8,5,3最后我们需要得到的水为4升水
-var waterstate=Alg_bucket.getload([8,5,3],4)[0] || [[0,0,0]];
+//var waterstate=Alg_bucket.getload([8,5,3],4)[0] || [[0,0,0]];
 class App extends React.Component{
   constructor(props) {
     super(props);
-    this.currentStateIndex=0;
-    this.state = {
-      bucket_one_cap:8,//水桶1的容积
-      bucket_two_cap:5,
-      bucket_three_cap:3,
+    this.currentStateIndex=-1;
+    this.state = {//初始化页面的值
+      bucket_one_cap:10,//水桶1的容积
+      bucket_two_cap:10,
+      bucket_three_cap:10,
       //水桶当前的水量
-      bucket_one:waterstate[this.currentStateIndex][0],//第一个水桶水量
-      bucket_two:waterstate[this.currentStateIndex][1],//第二个水桶水量
-      bucket_three:waterstate[this.currentStateIndex][2]//第三个水桶水量
+      //bucket_one:waterstate[this.currentStateIndex][0],//第一个水桶水量
+      bucket_one:0,//第一个水桶水量
+      //bucket_two:waterstate[this.currentStateIndex][1],//第二个水桶水量
+      bucket_two:0,//第二个水桶水量
+      //bucket_three:waterstate[this.currentStateIndex][2]//第三个水桶水量
+      bucket_three:0//第三个水桶水量
     };
-
+    this.waterstate=[];//代表水桶的一个解数组，初始值为空
     this._animate = new ReactStateAnimation(this)
   }
   //====================水位变化动画=============================
@@ -45,33 +48,51 @@ class App extends React.Component{
       return
     }
     this.currentStateIndex=this.currentStateIndex-1;
-    let newWaterState=waterstate[this.currentStateIndex];
+    let newWaterState=this.waterstate[this.currentStateIndex];
+    console.log(newWaterState);//打印这个状态
     this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
     //console.log(this.state);
   }
   //下一个倒水动作
   nextStep(){
     //console.log(this.state);
-    if(this.currentStateIndex==waterstate.length-1){
+    if(this.currentStateIndex==this.waterstate.length-1){
       alert("已经是最后的一个动作");
       return
     }
     this.currentStateIndex=this.currentStateIndex+1;
-    let newWaterState=waterstate[this.currentStateIndex];
+    let newWaterState=this.waterstate[this.currentStateIndex];
+    console.log(newWaterState);//打印这个状态
     this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
     //console.log(this.state);
   }
-  //设置初始值和求解
+  //==========================================================
+  //设置初始值和求解（改变水桶的状态）
+  //=========================================================
   SetAndSolve(){
     var bucket_cap = this.refs.text_bucket_cap.getValue();
     var bucket_cap_slice=bucket_cap.split(",");//输入为3,5,6的格式我们以”，“分割
+    for (var i = bucket_cap_slice.length - 1; i >= 0; i--) {
+      bucket_cap_slice[i]=Number(bucket_cap_slice[i]);
+    };
+    var last_value = Number(this.refs.text_last_value.getValue());
+    //根据输入获取可行解
+    //this.waterstate=Alg_bucket.getload([8,5,3],4)[0] || [[0,0,0]];
+    //console.log(last_value);
+    var allLoad=Alg_bucket.getload(bucket_cap_slice,last_value);
+    console.log(allLoad);
+    this.waterstate=allLoad[0];
     this.setState({
-      bucket_one_cap:Number(bucket_cap_slice[0]),
-      bucket_two_cap:Number(bucket_cap_slice[1]),
-      bucket_three_cap:Number(bucket_cap_slice[2])
+      //根据输入设置水桶容积
+      bucket_one_cap:bucket_cap_slice[0],
+      bucket_two_cap:bucket_cap_slice[1],
+      bucket_three_cap:bucket_cap_slice[2]
     })
     console.log(bucket_cap_slice);
   }
+  //===========================================================
+  //渲染
+  //==========================================================
   render() {
     return (
       <div style={styles.contain}>

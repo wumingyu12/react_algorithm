@@ -11,13 +11,12 @@ var SEARCH_LOAD=[];
 //所有的成功可行的路径就是我们要求的所有解集合，作为最终输出
 var ALL_SEARCH_LOAD=[];
 
-/*用来判断数组里面是否具有某个数组
+/*=======================用来判断数组里面是否具有某个数组============================
 	var tem = new Array();
 	tem=[[1,2,3],[3,2,1]];
-	tem.contains([3,2,1])
+	tem.ArrContains([3,2,1])
 	true
- */
-
+ ===================================================================================*/
 Array.prototype.ArrContains = function (element) {
     for (var i = 0; i < this.length; i++) {
         if (this[i].toString() == element.toString()) {
@@ -30,11 +29,6 @@ Array.prototype.ArrContains = function (element) {
 //树节点
 var treenode={
 	value:[0,0,0],
-	children:[]
-}
-//初始的树节点
-var RootNode ={
-	value:[8,0,0],
 	children:[]
 }
 /*======================================================================================
@@ -85,13 +79,13 @@ function createChild(fatherObj,BucketCapArr){
 	for (var numfrom = 0; numfrom < BUCKET_COUNT; numfrom++) {//代表从numfrom倒水到numto
 		for (var numto = 0; numto < BUCKET_COUNT; numto++){
 			//如果这个倒水动作,从numfrom倒水到numto 是可行的
-			if( _canTakeDumpAction([8,5,3],fatherObj.value,numfrom,numto) ){
+			if( _canTakeDumpAction(BucketCapArr,fatherObj.value,numfrom,numto) ){
 				//var tem = Object.assign({},fatherObj.value);//复制对象直接赋值就是地址传值
 				var tem = fatherObj.value.slice();//数组的值传递，没有slice就会变成引用传递
 				//如果倒出桶的水大于倒入桶的空位
-				if( fatherObj.value[numfrom] >= ([8,5,3][numto]-fatherObj.value[numto]) ){
-					tem[numto]=[8,5,3][numto];//倒水入的桶满了
-					tem[numfrom]=(fatherObj.value[numfrom]-([8,5,3][numto]-fatherObj.value[numto]))//倒出水桶倒出后剩下的水
+				if( fatherObj.value[numfrom] >= (BucketCapArr[numto]-fatherObj.value[numto]) ){
+					tem[numto]=BucketCapArr[numto];//倒水入的桶满了
+					tem[numfrom]=(fatherObj.value[numfrom]-(BucketCapArr[numto]-fatherObj.value[numto]))//倒出水桶倒出后剩下的水
 				}else{//如果倒出桶的水小倒入桶的空位
 					tem[numfrom]=0;//倒出桶的水空了
 					tem[numto]=fatherObj.value[numto]+fatherObj.value[numfrom]//倒入水桶后的水
@@ -123,8 +117,9 @@ function createChild(fatherObj,BucketCapArr){
 	输入：
 		1.要进行搜索的节点 
 		2.水桶水的容积数组BucketCapArr，如[8,5,3]
+		3.WaterCount代表我最后要的是几升的水，如WaterCount=4 代表我最后要一个桶有4升水
 =====================================================================================*/
-function nodeSearch(nodeObj,BucketCapArr){
+function nodeSearch(nodeObj,BucketCapArr,WaterCount){
 	//debugger
 	//步骤1
 	SEARCH_LOAD.push(nodeObj.value);
@@ -134,7 +129,8 @@ function nodeSearch(nodeObj,BucketCapArr){
 		return;
 	};
 	//步骤3
-	if(nodeObj.value.toString()==[4,4,0].toString()){
+	//if(nodeObj.value.toString()==[4,4,0].toString()){
+	if(nodeObj.value.indexOf(WaterCount) > -1){//如果这个状态里面有我们需要的水量数，代表这是一条成功的路径
 		ALL_SEARCH_LOAD.push(SEARCH_LOAD.slice());//记录这个路径解,注意是一个值传递
 		SEARCH_LOAD.pop();
 		return;
@@ -147,7 +143,7 @@ function nodeSearch(nodeObj,BucketCapArr){
 	if(nodeObj.children.toString() != [].toString() ){//如果nodeObj下面的儿子不为空
 		//采用深度优先的方法搜索
 		for (var i = 0; i < nodeObj.children.length; i++) {
-			nodeSearch(nodeObj.children[i],BucketCapArr);
+			nodeSearch(nodeObj.children[i],BucketCapArr,WaterCount);
 		};
 	};
 	//步骤5
@@ -161,7 +157,22 @@ function nodeSearch(nodeObj,BucketCapArr){
 		2.我们需要求得到的水桶容积数WaterCount如4,代表4升水最后我们需要
 */
 export function getload(BucketCapArr,WaterCount){
-	nodeSearch(RootNode,BucketCapArr);
+	//初始的树节点,将初始节点分成3种，每一种对应于某一个桶一开始是满水的
+	var RootNode1 ={
+		value:[BucketCapArr[0],0,0],
+		children:[]
+	};
+	var RootNode2 ={
+		value:[0,BucketCapArr[1],0],
+		children:[]
+	}
+	var RootNode3 ={
+		value:[0,0,BucketCapArr[2]],
+		children:[]
+	};
+	nodeSearch(RootNode1,BucketCapArr,WaterCount);
+	nodeSearch(RootNode2,BucketCapArr,WaterCount);
+	nodeSearch(RootNode3,BucketCapArr,WaterCount);
 	return ALL_SEARCH_LOAD;
 }
 // 生成子节点的测试
