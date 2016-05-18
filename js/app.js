@@ -16,6 +16,8 @@ class App extends React.Component{
     super(props);
     this.currentStateIndex=-1;
     this.state = {//初始化页面的值
+      //所有搜索出来的解组成的解数组，[ [[0,0,8],[2,2,3],[2,2,4],[1,3,2]] ,  [[0,0,8],[2,2,3],[2,2,4],[1,3,2]].....]
+      allLoad:[],
       bucket_one_cap:10,//水桶1的容积
       bucket_two_cap:10,
       bucket_three_cap:10,
@@ -79,10 +81,16 @@ class App extends React.Component{
     //根据输入获取可行解
     //this.waterstate=Alg_bucket.getload([8,5,3],4)[0] || [[0,0,0]];
     //console.log(last_value);
-    var allLoad=Alg_bucket.getload(bucket_cap_slice,last_value);
-    console.log(allLoad);
-    this.waterstate=allLoad[0];
+    var temallLoad=Alg_bucket.getload(bucket_cap_slice,last_value);
+    if(temallLoad.toString()==[].toString()){
+      alert("不能搜索到解");
+      return;
+    }
+
+    alert("搜索到"+temallLoad.length+"个解");
+    this.waterstate=temallLoad[0];
     this.setState({
+      allLoad:temallLoad,
       //根据输入设置水桶容积
       bucket_one_cap:bucket_cap_slice[0],
       bucket_two_cap:bucket_cap_slice[1],
@@ -94,6 +102,10 @@ class App extends React.Component{
   //渲染
   //==========================================================
   render() {
+    var load=[];
+    for (var i = 0; i < this.state.allLoad.length; i++) {
+      load.push(<button>使用解{i+1}</button>)
+    };
     return (
       <div style={styles.contain}>
         {/*顶部可以设置水桶初始值的地方*/}
@@ -112,6 +124,8 @@ class App extends React.Component{
               />
           </div>
         </div>
+        {/*显示所有的解的按钮*/}
+        <div style={styles.titlePan}>{load}</div>
         {/*水桶容器*/}
         <div style={styles.bucketcontain}>
           <div style={styles.jiange}></div>
@@ -174,7 +188,7 @@ const styles = {
     height:'40px',
   },
   bucketcontain:{
-    flex:4,
+    flex:8,
     display:'flex',
     alignItems:'stretch',
     //flexDirection:'column',
