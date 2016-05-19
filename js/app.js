@@ -66,7 +66,7 @@ class App extends React.Component{
     }
     this.currentStateIndex=this.currentStateIndex+1;
     let newWaterState=this.waterstate[this.currentStateIndex];
-    console.log(newWaterState);//打印这个状态
+    console.log(newWaterState.toString());//打印这个状态
     this.changeWaterUseAnimation(newWaterState[0],newWaterState[1],newWaterState[2])
     //console.log(this.state);
   }
