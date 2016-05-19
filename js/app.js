@@ -27,9 +27,11 @@ class App extends React.Component{
       //bucket_two:waterstate[this.currentStateIndex][1],//第二个水桶水量
       bucket_two:0,//第二个水桶水量
       //bucket_three:waterstate[this.currentStateIndex][2]//第三个水桶水量
-      bucket_three:0//第三个水桶水量
+      bucket_three:0,//第三个水桶水量
+      //生成多少个解对应多少个按钮，每一个按钮的颜色由下面的数组控制
+      btnColor_arr:[]
     };
-    this.waterstate=[];//代表水桶的一个解数组，初始值为空
+    this.waterstate=[];//代表水桶的一个解数组，初始值为空，这个数组也是动画用来演示的数组
     this._animate = new ReactStateAnimation(this)
   }
   //====================水位变化动画=============================
@@ -88,23 +90,67 @@ class App extends React.Component{
     }
 
     alert("搜索到"+temallLoad.length+"个解");
+    //当前用来演示的解为第一个解
     this.waterstate=temallLoad[0];
+    //生成多少个解都会有多少个按钮，定义每一个按钮的初始时的颜色
+    var btnColor_arr=[];
+    for (var i = 0; i < temallLoad.length; i++) {
+      if (i==0) {btnColor_arr.push(true);};//第一个为默认值所以第一个颜色设置为蓝色
+      btnColor_arr.push(false);
+    };
     this.setState({
       allLoad:temallLoad,
       //根据输入设置水桶容积
       bucket_one_cap:bucket_cap_slice[0],
       bucket_two_cap:bucket_cap_slice[1],
-      bucket_three_cap:bucket_cap_slice[2]
+      bucket_three_cap:bucket_cap_slice[2],
+      //用来代表按钮颜色的数组，false代表用默认色，true代表用第二颜色
+      btnColor_arr:btnColor_arr
     })
     console.log(bucket_cap_slice);
+  }
+  //=================================================
+  //用户选择用某个解演示时
+  //=================================================
+  _btnLoad(index,str){
+    //新建一个代表解按钮的颜色数组
+    var new_btnColor_arr=[];
+    for(var i=0;i<this.state.btnColor_arr.length;i++){
+      if (i==index) {//将当前按的按钮根据index改变为非默认
+        new_btnColor_arr.push(true);
+      }else{
+        new_btnColor_arr.push(false);
+      };
+    };
+    this.setState({
+      //重新设定按钮的颜色数组
+      btnColor_arr:new_btnColor_arr,
+      //将当前水桶里面具有的水也设置为0
+      bucket_one:0,//第一个水桶水量
+      bucket_two:0,//第二个水桶水量
+      bucket_three:0,//第三个水桶水量
+    });
+    //将当前我们要演示的解也设置到所有解集的某个对应解上（通过index）
+    this.waterstate=this.state.allLoad[index];
+    //将动画的当前歩数设置为-1
+    this.currentStateIndex=-1;
   }
   //===========================================================
   //渲染
   //==========================================================
   render() {
+    //生成解后，可以通过按不同的按钮来演示不同的解
     var load=[];
     for (var i = 0; i < this.state.allLoad.length; i++) {
-      load.push(<button>使用解{i+1}</button>)
+      let str="使用解"+(i+1);
+      //通过控制secondary控制按钮的颜色变化
+      load.push(<RaisedButton 
+        label={str} 
+        secondary={this.state.btnColor_arr[i]}
+        //用户选择用解
+        onMouseDown={this._btnLoad.bind(this,i,str)}
+        ref={str}//用btn的名字直接作为ref
+        ></RaisedButton>)
     };
     return (
       <div style={styles.contain}>
